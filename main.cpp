@@ -1,26 +1,30 @@
 #include <iostream>
 #include <fstream>
 
+using namespace std;
+
 int main(int argc, char **argv) {
     // source: http://rosettacode.org/wiki/FASTA_format#C.2B.2B
 
     if (argc <= 1) {
-        std::cerr << "Usage: " << argv[0] << " [infile]" << std::endl;
+        cerr << "Usage: " << argv[0] << " [infile]" << endl;
         return -1;
     }
 
-    std::ifstream input(argv[1]);
+    ifstream input(argv[1]);
     if (!input.good()) {
-        std::cerr << "Error opening '" << argv[1] << "'. Bailing out." << std::endl;
+        cerr << "Error opening '" << argv[1] << "'. Bailing out." << endl;
         return -1;
     }
 
-    std::string line, name, content;
+    string line, name, content;
+    int count = 0;
 
-    while(std::getline( input, line ).good()) {
+    while(getline(input, line).good()) {
         if (line.empty() || line[0] == '>') { // Identifier marker
             if (!name.empty()) { // Print out what we read from the last entry
-                std::cout << name << " : " << content << std::endl;
+                cout << name << " : " << content << endl;
+                count++;
                 name.clear();
             }
             if (!line.empty()) {
@@ -28,7 +32,7 @@ int main(int argc, char **argv) {
             }
             content.clear();
         } else if (!name.empty()) {
-            if (line.find(' ') != std::string::npos) { // Invalid sequence--no spaces allowed
+            if (line.find(' ') != string::npos) { // Invalid sequence--no spaces allowed
                 name.clear();
                 content.clear();
             } else {
@@ -37,8 +41,11 @@ int main(int argc, char **argv) {
         }
     }
     if(!name.empty()) { // Print out what we read from the last entry
-        std::cout << name << " : " << content << std::endl;
+        cout << name << " : " << content << endl;
+        count++;
     }
+
+    cout << "Number of reads: " << count << endl;
 
     return 0;
 }
