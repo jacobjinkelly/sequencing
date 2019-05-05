@@ -9,12 +9,50 @@ const int ALPHABET_SIZE = 4;
 const char ALPHABET[] = {'A', 'C', 'T', 'G'};
 const map<char, int> ALPHABET_MAP = {{'A', 0}, {'C', 1}, {'T', 2}, {'G', 3}};
 
+
+// "fundamental preprocessing" as described at https://web.cs.ucdavis.edu/~gusfield/cs224f09/znotes.pdf
+int* preprocess(string const& s) {
+    const int s_len = s.length();
+
+    int* z = new int{s_len - 1};
+    int r = 0;
+    int l = 0;
+
+    // compute the base case
+    for (z[0] = 0; ((z[0] < s_len - 1) && (s[z[0]] == s[z[0] + 1])); z[0]++) {}
+    if (z[0] > 0) {
+        r = z[0] + 1;
+        l = 1;
+    }
+
+    // inductively compute the rest
+    for (int k = 1; k < s_len - 1; k++) {
+        if (k > r) {
+            for (z[k] = 0; ((z[k] < s_len - 1) && (s[z[k]] == s[z[k] + 1])); z[k]++) {}
+            if (z[k] > 0) {
+                r = k + z[k] - 1;
+                l = k;
+            }
+        } else {
+            if (z[k - l + 1] < r - k + 1) {
+                z[k] = z[k - l + 1];
+            } else {
+                for (z[k] = r + 1; ((z[k] + 1 - k < s_len) && (s[z[k]] == s[z[k] + 1 - k])); z[k]++)
+                z[k] -= k;
+                r = z[k] + k - 1;
+                l = k;
+            }
+        }
+    }
+
+    return z;
+}
+
+
 // Return alignments of p in t using Boyer-Moore
 vector<int> boyer_moore(string const& p, string const& t) {
-    int p_len = p.length();
-    int t_len = t.length();
-
-    // build indices for p
+    const int p_len = p.length();
+    const int t_len = t.length();
 
     // index for bad character rule
     int r[ALPHABET_SIZE] = {-1};
@@ -45,8 +83,8 @@ vector<int> boyer_moore(string const& p, string const& t) {
 
 // Return alignments of p in t using naive matching
 vector<int> naive(string const& p, string const& t) {
-    int p_len = p.length();
-    int t_len = t.length();
+    const int p_len = p.length();
+    const int t_len = t.length();
 
     vector<int> alignments;
     for (int i = 0; i < t_len - p_len + 1; i++) {
