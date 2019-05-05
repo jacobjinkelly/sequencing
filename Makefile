@@ -1,4 +1,4 @@
-FLAGS = -g -std=c++11
+FLAGS = -Wall -g -std=c++11
 
 all : main.exe align.exe
 
