@@ -9,10 +9,8 @@ const int ALPHABET_SIZE = 4;
 const char ALPHABET[] = {'A', 'C', 'T', 'G'};
 const map<char, int> ALPHABET_MAP = {{'A', 0}, {'C', 1}, {'T', 2}, {'G', 3}};
 
-// TODO: change types of params to be const string&?
-
 // Return alignments of p in t using Boyer-Moore
-vector<int> boyer_moore(string p, string t) {
+vector<int> boyer_moore(string const& p, string const& t) {
     int p_len = p.length();
     int t_len = t.length();
 
@@ -46,7 +44,7 @@ vector<int> boyer_moore(string p, string t) {
 
 
 // Return alignments of p in t using naive matching
-vector<int> naive(string p, string t) {
+vector<int> naive(string const& p, string const& t) {
     int p_len = p.length();
     int t_len = t.length();
 
@@ -68,7 +66,7 @@ vector<int> naive(string p, string t) {
 }
 
 // check if s only contains characters in ALPHABET
-bool check_alphabet(string s) {
+bool check_alphabet(string const& s) {
     bool check = true;
     for (auto& c : s) {
         bool in_alphabet = false;
