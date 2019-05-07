@@ -221,11 +221,11 @@ int main(int argc, char **argv) {
 
     print_arr(naive_preprocessed_suffix, s_len - 1);
     print_arr(n, s_len - 1);
-
-    vector<int> naive_alignments = naive(argv[1], argv[2]);
-    vector<int> boyer_moore_alignments = boyer_moore(argv[1], argv[2]);
-    print_vec(naive_alignments);
-    print_vec(boyer_moore_alignments);
+    // 
+    // vector<int> naive_alignments = naive(argv[1], argv[2]);
+    // vector<int> boyer_moore_alignments = boyer_moore(argv[1], argv[2]);
+    // print_vec(naive_alignments);
+    // print_vec(boyer_moore_alignments);
 
     return 0;
 }
