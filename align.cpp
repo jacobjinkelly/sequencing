@@ -26,7 +26,7 @@ int* bad_char_index(string const& p, int const p_len) {
 }
 
 // naively preprocess s in quadratic time
-int* naive_preprocess(string const& s, int const s_len) {
+int* naive_preprocess_prefix(string const& s, int const s_len) {
     int* z = new int[s_len - 1];
 
     for (int k = 0; k < s_len - 1; k++) {
@@ -36,28 +36,29 @@ int* naive_preprocess(string const& s, int const s_len) {
     return z;
 }
 
+// naively preprocess s in quadratic time
+int* naive_preprocess_suffix(string const& s, int const s_len) {
+    int* n = new int[s_len - 1];
+
+    for (int k = 0; k < s_len - 1; k++) {
+        for (n[k] = 0; ((n[k] <= k) && (s[k - n[k]] == s[s_len - 1 - n[k]])); n[k]++) {}
+    }
+
+    return n;
+}
+
 
 // "fundamental preprocessing" as described at https://web.cs.ucdavis.edu/~gusfield/cs224f09/znotes.pdf
 int* preprocess(string const& s, int const s_len ) {
-    // TODO: rewrite this to do on the reverse of s, and return the reverse of z
-
     int* z = new int[s_len - 1];
-    int r = 0;
-    int l = 0;
+    int r = -1;
+    int l = -1;
 
-    // compute the base case
-    for (z[0] = 0; ((z[0] + 1 < s_len) && (s[z[0]] == s[z[0] + 1])); z[0]++) {}
-    if (z[0] > 0) {
-        r = z[0];
-        l = 1;
-    }
-
-    // inductively compute the rest
-    for (int k = 1; k < s_len - 1; k++) {
-        if (k > r) {
+    for (int k = 0; k < s_len - 1; k++) {
+        if (k + 1 > r) {
             for (z[k] = 0; ((z[k] + k + 1 < s_len) && (s[z[k]] == s[z[k] + k + 1])); z[k]++) {}
             if (z[k] > 0) {
-                r = k + z[k] - 1;
+                r = k + z[k];
                 l = k + 1;
             }
         } else {
@@ -78,7 +79,17 @@ int* preprocess(string const& s, int const s_len ) {
 
 // creates index of p for good suffix rule
 int** good_suffix_index(string const& p, int const p_len) {
-    int* n = preprocess(p, p_len);
+    char* reversed = new char[p_len + 1];
+    for (int i = 0; i < p_len; i++) {
+        reversed[i] = p[p_len - 1 - i];
+    }
+    reversed[p_len] = '\0';
+
+    int* n = preprocess(reversed, p_len);
+
+    delete[] reversed;
+
+    reverse(n, n + p_len - 1);
 
     int** L = new int*[2];
     L[0] = new int[p_len]; // L
@@ -194,12 +205,22 @@ int main(int argc, char **argv) {
         return -3;
     }
     int s_len = strlen(argv[1]);
-    int* naive_preprocessed = naive_preprocess(argv[1], s_len);
-    int* preprocessed = preprocess(argv[1], s_len);
-    cout << "naive ";
-    print_arr(naive_preprocessed, s_len - 1);
-    cout << "fast ";
-    print_arr(preprocessed, s_len - 1);
+
+    int* naive_preprocessed_suffix = naive_preprocess_suffix(argv[1], s_len);
+
+    string p = argv[1];
+    int p_len = p.length();
+    char* reversed = new char[p_len + 1];
+    for (int i = 0; i < p_len; i++) {
+        reversed[i] = p[p_len - 1 - i];
+    }
+    reversed[p_len] = '\0';
+    int* n = preprocess(reversed, p_len);
+    delete[] reversed;
+    reverse(n, n + s_len - 1);
+
+    print_arr(naive_preprocessed_suffix, s_len - 1);
+    print_arr(n, s_len - 1);
 
     vector<int> naive_alignments = naive(argv[1], argv[2]);
     vector<int> boyer_moore_alignments = boyer_moore(argv[1], argv[2]);
