@@ -91,6 +91,7 @@ int** good_suffix_index(string const& p, int const p_len) {
         L[1][i] = -1;
     }
 
+    int i;
     for (int j = 0; j < p_len - 1; j++) {
         i = p_len - n[j];
         L[0][i] = j;
@@ -113,24 +114,43 @@ vector<int> boyer_moore(string const& p, string const& t) {
     const int t_len = t.length();
 
     int* r = bad_char_index(p, p_len);
+    int** L = good_suffix_index(p, p_len);
 
     vector<int> alignments;
+    int bad_index_shift;
+    int good_suffix_shift;
+    int shift;
     for (int i = 0; i < t_len - p_len + 1; i++) {
         bool match = true;
         for (int j = p_len - 1; j >= 0; j--) {
             if (p[j] != t[j + i]) {
-                i += max(1, j - r[ALPHABET_MAP.at(t[j + i])]) - 1;
+                bad_index_shift = j - r[ALPHABET_MAP.at(t[j + i])];
+                if (j == p_len - 1) {
+                    good_suffix_shift = 1;
+                } else {
+                    if (L[0][j] != -1) {
+                        good_suffix_shift = p_len - 1 - L[0][j];
+                    } else {
+                        good_suffix_shift = p_len - 1 - L[1][j];
+                    }
+                }
+                shift = max(bad_index_shift, good_suffix_shift);
+                i += max(0, shift - 1);
                 match = false;
                 break;
             }
         }
         if (match) {
             alignments.push_back(i);
+            i += p_len - 1 - L[1][0] - 1;
         }
     }
 
     // free indices
-    delete r;
+    delete[] r;
+    delete[] L[0];
+    delete[] L[1];
+    delete[] L;
 
     return alignments;
 }
