@@ -117,14 +117,14 @@ vector<int> boyer_moore(string const& p, string const& t) {
     int** L = good_suffix_index(p, p_len);
 
     vector<int> alignments;
-    int bad_index_shift;
+    int bad_char_shift;
     int good_suffix_shift;
     int shift;
     for (int i = 0; i < t_len - p_len + 1; i++) {
         bool match = true;
         for (int j = p_len - 1; j >= 0; j--) {
             if (p[j] != t[j + i]) {
-                bad_index_shift = j - r[ALPHABET_MAP.at(t[j + i])];
+                bad_char_shift = j - r[ALPHABET_MAP.at(t[j + i])];
                 if (j == p_len - 1) {
                     good_suffix_shift = 1;
                 } else {
@@ -134,7 +134,7 @@ vector<int> boyer_moore(string const& p, string const& t) {
                         good_suffix_shift = p_len - 1 - L[1][j];
                     }
                 }
-                shift = max(bad_index_shift, good_suffix_shift);
+                shift = max(bad_char_shift, good_suffix_shift);
                 i += max(0, shift - 1);
                 match = false;
                 break;
@@ -227,6 +227,7 @@ int main(int argc, char **argv) {
 
     vector<int> naive_alignments = naive(argv[1], argv[2]);
     vector<int> boyer_moore_alignments = boyer_moore(argv[1], argv[2]);
+    cout << "Result: " << endl;
     print_vec(naive_alignments);
     print_vec(boyer_moore_alignments);
 
