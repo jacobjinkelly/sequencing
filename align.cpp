@@ -26,18 +26,7 @@ int* bad_char_index(string const& p, int const p_len) {
 }
 
 // naively preprocess s in quadratic time
-int* naive_preprocess_prefix(string const& s, int const s_len) {
-    int* z = new int[s_len - 1];
-
-    for (int k = 0; k < s_len - 1; k++) {
-        for (z[k] = 0; ((z[k] + k + 1 < s_len) && (s[z[k]] == s[z[k] + k + 1])); z[k]++) {}
-    }
-
-    return z;
-}
-
-// naively preprocess s in quadratic time
-int* naive_preprocess_suffix(string const& s, int const s_len) {
+int* naive_preprocess(string const& s, int const s_len) {
     int* n = new int[s_len - 1];
 
     for (int k = 0; k < s_len - 1; k++) {
@@ -79,18 +68,20 @@ int* preprocess(string const& s, int const s_len ) {
 
 // creates index of p for good suffix rule
 int** good_suffix_index(string const& p, int const p_len) {
+    // reverse p
     char* reversed = new char[p_len + 1];
     for (int i = 0; i < p_len; i++) {
         reversed[i] = p[p_len - 1 - i];
     }
     reversed[p_len] = '\0';
 
+    // do fundamental preprocessing on reversed p
     int* n = preprocess(reversed, p_len);
 
-    delete[] reversed;
-
+    // reverse the result
     reverse(n, n + p_len - 1);
 
+    // construct indices
     int** L = new int*[2];
     L[0] = new int[p_len]; // L
     L[1] = new int[p_len]; // l
@@ -103,6 +94,10 @@ int** good_suffix_index(string const& p, int const p_len) {
     for (int i = 0; i < p_len - 1; i++) {
         L[0][p_len - n[i] + 1] = i;
     }
+
+
+    // clean up
+    delete[] reversed;
 
     return L;
 }
@@ -204,28 +199,11 @@ int main(int argc, char **argv) {
         cerr << "[p], [t] must consist only of characters in the alphabet" << endl;
         return -3;
     }
-    int s_len = strlen(argv[1]);
 
-    int* naive_preprocessed_suffix = naive_preprocess_suffix(argv[1], s_len);
-
-    string p = argv[1];
-    int p_len = p.length();
-    char* reversed = new char[p_len + 1];
-    for (int i = 0; i < p_len; i++) {
-        reversed[i] = p[p_len - 1 - i];
-    }
-    reversed[p_len] = '\0';
-    int* n = preprocess(reversed, p_len);
-    delete[] reversed;
-    reverse(n, n + s_len - 1);
-
-    print_arr(naive_preprocessed_suffix, s_len - 1);
-    print_arr(n, s_len - 1);
-    // 
-    // vector<int> naive_alignments = naive(argv[1], argv[2]);
-    // vector<int> boyer_moore_alignments = boyer_moore(argv[1], argv[2]);
-    // print_vec(naive_alignments);
-    // print_vec(boyer_moore_alignments);
+    vector<int> naive_alignments = naive(argv[1], argv[2]);
+    vector<int> boyer_moore_alignments = boyer_moore(argv[1], argv[2]);
+    print_vec(naive_alignments);
+    print_vec(boyer_moore_alignments);
 
     return 0;
 }
