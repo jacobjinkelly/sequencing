@@ -81,20 +81,25 @@ int** good_suffix_index(string const& p, int const p_len) {
     // reverse the result
     reverse(n, n + p_len - 1);
 
-    // construct indices
+    // construct indices as described in https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
     int** L = new int*[2];
     L[0] = new int[p_len]; // L
     L[1] = new int[p_len]; // l
 
-    // TODO: accumulate L[1]
     for (int i = 0; i < p_len; i++) {
-        L[0][i] = 0;
+        L[0][i] = -1;
+        L[1][i] = -1;
     }
 
-    for (int i = 0; i < p_len - 1; i++) {
-        L[0][p_len - n[i] + 1] = i;
-    }
+    for (int j = 0; j < p_len - 1; j++) {
+        i = p_len - n[j];
+        L[0][i] = j;
 
+        if (n[j] == j) {
+            i = p_len - j;
+            L[1][i] = j;
+        }
+    }
 
     // clean up
     delete[] reversed;
