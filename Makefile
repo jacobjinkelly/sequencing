@@ -1,18 +1,12 @@
 FLAGS = -Wall -g -std=c++11
 
-all : main.exe align.exe
-
-main.exe : main.o
-	g++ $(FLAGS) -o main.exe main.o
-
-main.o : main.cpp
-	g++ $(FLAGS) -c main.cpp
+all : align.exe
 
 align.exe : align.o
-	g++ $(FLAGS) -o align.exe align.o
+	g++ $(FLAGS) -o $@ $^
 
-align.o : align.cpp
-	g++ $(FLAGS) -c align.cpp
+%.o : %.cpp %.h
+	g++ $(FLAGS) -c $<
 
 clean : 
 	rm *.o *.exe

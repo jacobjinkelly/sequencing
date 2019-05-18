@@ -1,8 +1,6 @@
-#include <iostream>
-#include <vector>
-#include <map>
-#include <algorithm>
-#include <cstring>
+// functions for sequence alignment
+
+#include "align.h"
 
 using namespace std;
 
