@@ -66,6 +66,46 @@ int* preprocess(string const& s, int const s_len ) {
 }
 
 
+// naively creates index of p for good suffix rule
+int** naive_good_suffix_index(string const& p, int const p_len) {
+    // reverse p
+    char* reversed = new char[p_len + 1];
+    for (int i = 0; i < p_len; i++) {
+        reversed[i] = p[p_len - 1 - i];
+    }
+    reversed[p_len] = '\0';
+
+    // do fundamental preprocessing on reversed p
+    int* n = preprocess(reversed, p_len);
+
+    // reverse the result
+    reverse(n, n + p_len - 1);
+
+    // construct indices as described in https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
+    int** L = new int*[2];
+    L[0] = new int[p_len]; // L
+    L[1] = new int[p_len]; // l
+
+    for (int i = 0; i < p_len; i++) {
+        L[0][i] = -1;
+        L[1][i] = -1;
+        for (int j = 0; j < p_len - 1; j++) {
+            if (n[j] == p_len - i) {
+                L[0][i] = j;
+            }
+            if (n[j] == j) {
+                L[1][i] = j;
+            }
+        }
+    }
+
+    // clean up
+    delete[] reversed;
+
+    return L;
+}
+
+
 // creates index of p for good suffix rule
 int** good_suffix_index(string const& p, int const p_len) {
     // reverse p
@@ -114,7 +154,7 @@ vector<int> boyer_moore(string const& p, string const& t) {
     const int t_len = t.length();
 
     int* r = bad_char_index(p, p_len);
-    int** L = good_suffix_index(p, p_len);
+    int** L = naive_good_suffix_index(p, p_len);
 
     vector<int> alignments;
     int bad_char_shift;
@@ -224,6 +264,16 @@ int main(int argc, char **argv) {
         cerr << "[p], [t] must consist only of characters in the alphabet" << endl;
         return -3;
     }
+    //
+    // string p = argv[1];
+    // int p_len = p.length();
+    // int** L_naive = naive_good_suffix_index(p, p_len);
+    // int** L = good_suffix_index(p, p_len);
+    // cout << "Result" << endl;
+    // print_arr(L_naive[0], p_len - 1);
+    // print_arr(L[0], p_len - 1);
+    // print_arr(L_naive[1], p_len - 1);
+    // print_arr(L[1], p_len - 1);
 
     vector<int> naive_alignments = naive(argv[1], argv[2]);
     vector<int> boyer_moore_alignments = boyer_moore(argv[1], argv[2]);
