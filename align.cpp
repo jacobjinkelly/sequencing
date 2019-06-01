@@ -11,7 +11,10 @@ const map<char, int> ALPHABET_MAP = {{'A', 0}, {'C', 1}, {'T', 2}, {'G', 3}};
 
 // creates index of p for bad character rule
 int* bad_char_index(string const& p, int const p_len) {
+    // r[i] is the rightmost position of the ith char
+    // in the alphabet in p
     int* r = new int[ALPHABET_SIZE];
+
     for (int i = 0; i < ALPHABET_SIZE; i++) {
         r[i] = -1;
     }
@@ -24,24 +27,29 @@ int* bad_char_index(string const& p, int const p_len) {
     return r;
 }
 
-// naively preprocess s in quadratic time
+// naively "preprocess" s in quadratic time
 int* naive_preprocess(string const& s, int const s_len) {
+    // n[j] is the length of the longest suffix of the
+    // substring s[0..j] that is also a suffix of s
     int* n = new int[s_len - 1];
 
-    for (int k = 0; k < s_len - 1; k++) {
-        for (n[k] = 0; ((n[k] <= k) && (s[k - n[k]] == s[s_len - 1 - n[k]])); n[k]++) {}
+    for (int j = 0; j < s_len - 1; j++) {
+        for (n[j] = 0; ((n[j] <= j) && (s[j - n[j]] == s[s_len - 1 - n[j]])); n[j]++) {}
     }
 
     return n;
 }
 
-
-// "fundamental preprocessing" as described at https://web.cs.ucdavis.edu/~gusfield/cs224f09/znotes.pdf
+// "preprocess" s efficiently
 int* preprocess(string const& s, int const s_len ) {
+    // z[i] is the length of the longest substring of s
+    // that starts at i + 1 and matches a prefix of s
     int* z = new int[s_len - 1];
     int r = -1;
     int l = -1;
 
+    // the Z algorithm as described in Section 1.4 of
+    // https://web.cs.ucdavis.edu/~gusfield/cs224f09/znotes.pdf
     for (int k = 0; k < s_len - 1; k++) {
         if (k + 1 > r) {
             for (z[k] = 0; ((z[k] + k + 1 < s_len) && (s[z[k]] == s[z[k] + k + 1])); z[k]++) {}
@@ -80,11 +88,19 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
     // reverse the result
     reverse(n, n + p_len - 1);
 
-    // construct indices as described in https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
+    // construct indices as described in
+    // https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
+    // L[0] is "L`" in the notes, L[1] is "l`" in the notes
     int** L = new int*[2];
-    L[0] = new int[p_len]; // L
-    L[1] = new int[p_len]; // l
+    // L[0][i] = j such that j < n - 1, and
+    // p[i..n - 1] matches a suffix of p[0..j], and
+    // the character preceding the suffix is not equal to p[i - 1]
+    L[0] = new int[p_len];
+    // L[1][i] length of the largest suffix of p[i..n - 1]
+    // that is also a prefix of p
+    L[1] = new int[p_len];
 
+    // TODO: rewrite this to be straight from definition
     for (int i = 0; i < p_len; i++) {
         L[0][i] = -1;
         L[1][i] = -1;
@@ -120,10 +136,12 @@ int** good_suffix_index(string const& p, int const p_len) {
     // reverse the result
     reverse(n, n + p_len - 1);
 
-    // construct indices as described in https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
+    // construct indices as described in
+    // https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
+    // L[0] is "L`" in the notes, L[1] is "l`" in the notes
     int** L = new int*[2];
-    L[0] = new int[p_len]; // L
-    L[1] = new int[p_len]; // l
+    L[0] = new int[p_len];
+    L[1] = new int[p_len];
 
     for (int i = 0; i < p_len; i++) {
         L[0][i] = -1;
@@ -264,11 +282,14 @@ int main(int argc, char **argv) {
         return -3;
     }
 
-    vector<int> naive_alignments = naive(argv[1], argv[2]);
-    vector<int> boyer_moore_alignments = boyer_moore(argv[1], argv[2]);
-    cout << "Result: " << endl;
-    print_vec(naive_alignments);
-    print_vec(boyer_moore_alignments);
+    int p_len = strlen(argv[1]);
+    int** naive_good_suffix = naive_good_suffix_index(argv[1], p_len);
+    int** good_suffix = good_suffix_index(argv[1], p_len);
 
+    cout << "Result: " << endl;
+    print_arr(naive_good_suffix[0], p_len);
+    print_arr(good_suffix[0], p_len);
+    print_arr(naive_good_suffix[1], p_len);
+    print_arr(good_suffix[1], p_len);
     return 0;
 }
