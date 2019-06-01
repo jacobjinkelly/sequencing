@@ -4,5 +4,5 @@ make
 
 for i in tests/*.in
 do
-    align.exe $(<$i)
+    ./align.exe $(<$i)
 done
