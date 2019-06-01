@@ -75,19 +75,6 @@ int* preprocess(string const& s, int const s_len ) {
 
 // naively creates index of p for good suffix rule
 int** naive_good_suffix_index(string const& p, int const p_len) {
-    // reverse p
-    char* reversed = new char[p_len + 1];
-    for (int i = 0; i < p_len; i++) {
-        reversed[i] = p[p_len - 1 - i];
-    }
-    reversed[p_len] = '\0';
-
-    // do fundamental preprocessing on reversed p
-    int* n = preprocess(reversed, p_len);
-
-    // reverse the result
-    reverse(n, n + p_len - 1);
-
     // construct indices as described in
     // https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
     // L[0] is "L`" in the notes, L[1] is "l`" in the notes
@@ -132,9 +119,6 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
             j++) {}
         L[1][i] = j - 1;
     }
-
-    // clean up
-    delete[] reversed;
 
     return L;
 }
