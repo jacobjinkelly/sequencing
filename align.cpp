@@ -4,9 +4,9 @@
 
 using namespace std;
 
-constexpr int ALPHABET_SIZE = 4;
-constexpr char ALPHABET[] = {'A', 'C', 'T', 'G'};
-const map<char, int> ALPHABET_MAP = {{'A', 0}, {'C', 1}, {'T', 2}, {'G', 3}};
+int ALPHABET_SIZE = 0;
+vector<char> ALPHABET;
+map<char, int> ALPHABET_MAP;
 
 
 // creates index of p for bad character rule
@@ -19,8 +19,8 @@ int* bad_char_index(string const& p, int const p_len) {
         r[i] = -1;
     }
     for (int i = p_len - 1; i >= 0; i--) {
-        if (r[ALPHABET_MAP.at(p[i])] == -1) {
-            r[ALPHABET_MAP.at(p[i])] = i;
+        if (r[ALPHABET_MAP[p[i]]] == -1) {
+            r[ALPHABET_MAP[p[i]]] = i;
         }
     }
 
@@ -200,7 +200,7 @@ vector<int> boyer_moore(string const& p, string const& t) {
         bool match = true;
         for (int j = p_len - 1; j >= 0; j--) {
             if (p[j] != t[j + i]) {
-                bad_char_shift = j - r[ALPHABET_MAP.at(t[j + i])];
+                bad_char_shift = j - r[ALPHABET_MAP[t[j + i]]];
                 if (j == p_len - 1) {
                     good_suffix_shift = 1;
                 } else {
@@ -273,6 +273,24 @@ bool check_alphabet(string const& s) {
     return check;
 }
 
+// add the characters of s to the alphabet
+void add_alphabet(string const& s) {
+    for (auto& c : s) {
+        bool in_alphabet = false;
+        for (auto& a: ALPHABET) {
+            if (c == a) {
+                in_alphabet = true;
+                break;
+            }
+        }
+        if (!in_alphabet) {
+            ALPHABET.push_back(c);
+            ALPHABET_MAP.insert(pair<char, int>(c, ALPHABET_SIZE));
+            ALPHABET_SIZE++;
+        }
+    }
+}
+
 // print elements of vector to stdout
 void print_vec(vector<int> const& input) {
     for (auto const& i : input) {
@@ -296,10 +314,10 @@ int main(int argc, char **argv) {
     } else if (strlen(argv[1]) > strlen(argv[2])) {
         cerr << "[p] must be no longer than [t]" << endl;
         return -2;
-    } else if (!(check_alphabet(argv[1]) && check_alphabet(argv[2]))) {
-        cerr << "[p], [t] must consist only of characters in the alphabet" << endl;
-        return -3;
     }
+    // construct alphabet
+    add_alphabet(argv[1]);
+    add_alphabet(argv[2]);
 
     int p_len = strlen(argv[1]);
     int** naive_good_suffix = naive_good_suffix_index(argv[1], p_len);
