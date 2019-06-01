@@ -109,7 +109,7 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
             int k;
             for (k = j;
                 (k >= 0) &&
-                (p_len - 1 - (j - k) >= i)
+                (p_len - 1 - (j - k) >= i) &&
                 (p[k] == p[p_len - 1 - (j - k)]);
                 k--) {}
 
