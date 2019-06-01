@@ -101,10 +101,8 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
     // that is also a prefix of p
     L[1] = new int[p_len];
 
-    // TODO: rewrite this to be straight from definition
     for (int i = 0; i < p_len; i++) {
         L[0][i] = -1;
-        L[1][i] = -1;
         for (int j = 0; j < p_len - 1; j++) {
 
             // check if p[i..p_len - 1] matches a suffix of p[0..j]
@@ -125,6 +123,14 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
                 }
             }
         }
+
+        int j;
+        for (j = 0;
+            (j < p_len) &&
+            (p_len - 1 - j >= i) &&
+            (p[j] == p[p_len - 1 - j]);
+            j++) {}
+        L[1][i] = j - 1;
     }
 
     // clean up
