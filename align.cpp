@@ -307,7 +307,6 @@ int main(int argc, char **argv) {
     int** naive_good_suffix = naive_good_suffix_index(argv[1], p_len);
     int** good_suffix = good_suffix_index(argv[1], p_len);
 
-    cout << "Result: " << endl;
     print_arr(naive_good_suffix[0], p_len);
     print_arr(good_suffix[0], p_len);
     print_arr(naive_good_suffix[1], p_len);
