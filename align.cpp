@@ -92,11 +92,11 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
     // https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
     // L[0] is "L`" in the notes, L[1] is "l`" in the notes
     int** L = new int*[2];
-    // L[0][i] = j such that j < n - 1, and
-    // p[i..n - 1] matches a suffix of p[0..j], and
+    // L[0][i] = j such that j < p_len - 1, and
+    // p[i..p_len - 1] matches a suffix of p[0..j], and
     // the character preceding the suffix is not equal to p[i - 1]
     L[0] = new int[p_len];
-    // L[1][i] length of the largest suffix of p[i..n - 1]
+    // L[1][i] length of the largest suffix of p[i..p_len - 1]
     // that is also a prefix of p
     L[1] = new int[p_len];
 
