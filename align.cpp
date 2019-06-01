@@ -106,11 +106,23 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
         L[0][i] = -1;
         L[1][i] = -1;
         for (int j = 0; j < p_len - 1; j++) {
-            if (n[j] == p_len - i) {
-                L[0][i] = j;
-            }
-            if (n[j] == j) {
-                L[1][i] = j;
+
+            // check if p[i..p_len - 1] matches a suffix of p[0..j]
+            int k;
+            for (k = j;
+                (k >= 0) &&
+                (p_len - 1 - (j - k) >= i)
+                (p[k] == p[p_len - 1 - (j - k)]);
+                k--) {}
+
+            // matches a suffix
+            if (k < j) {
+                // check if character preceding suffix unequal to p[i - 1]
+                if ((i >= 1) && (k >= 0)) {
+                    if (p[i - 1] != p[k]) L[0][i] = j;
+                } else {
+                    L[0][i] = j;
+                }
             }
         }
     }
