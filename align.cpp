@@ -94,7 +94,7 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
         // so if p[i..p_len - 1] matches a suffix of p[0..j - 1],
         // we only need to consider j s.t. p[0..j - 1] is at least
         // as long as p[i..p_len - 1]
-        for (int j = p_len - i; j < p_len - 1; j++) {
+        for (int j = p_len - i; j < p_len; j++) {
 
             // check if p[i..p_len - 1] matches suffix of p[0..j - 1]
             int k;
