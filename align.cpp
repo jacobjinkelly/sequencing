@@ -81,7 +81,7 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
     int** L = new int*[2];
     // L[0][i] = max j such that:
     // j < p_len - 1
-    // p[i..p_len - 1] matches a suffix of p[0..j]
+    // p[i..p_len - 1] matches a suffix of p[0..j - 1]
     // the character preceding the suffix is not equal to p[i - 1]
     L[0] = new int[p_len];
     // L[1][i] length of the largest suffix of p[i..p_len - 1]
@@ -90,21 +90,24 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
 
     for (int i = 0; i < p_len; i++) {
         L[0][i] = -1;
-        for (int j = 0; j < p_len - 1; j++) {
+        // p[0..j - 1] has length j and p[i..p_len - 1] has length p_len - i
+        // so if p[i..p_len - 1] matches a suffix of p[0..j - 1],
+        // we only need to consider j s.t. p[0..j - 1] is at least
+        // as long as p[i..p_len - 1]
+        for (int j = p_len - i; j < p_len - 1; j++) {
 
-            // check if p[i..p_len - 1] matches a suffix of p[0..j]
+            // check if p[i..p_len - 1] matches suffix of p[0..j - 1]
             int k;
-            for (k = j;
-                (k >= 0) &&
-                (p_len - 1 - (j - k) >= i) &&
-                (p[k] == p[p_len - 1 - (j - k)]);
-                k--) {}
+            for (k = i;
+                (k <= p_len - 1) &&
+                (p[k] == p[k + j - p_len + 1]);
+                k++) {}
 
-            // matches a suffix
-            if (k < j) {
+            // matches suffix
+            if (k == p_len) {
                 // check if character preceding suffix unequal to p[i - 1]
-                if ((i >= 1) && (k >= 0)) {
-                    if (p[i - 1] != p[k]) L[0][i] = j;
+                if ((i >= 1) && (i + j - p_len >= 0)) {
+                    if (p[i - 1] != p[i + j - p_len]) L[0][i] = j;
                 } else {
                     L[0][i] = j;
                 }
