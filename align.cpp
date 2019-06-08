@@ -83,9 +83,11 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
     // j < p_len - 1
     // p[i..p_len - 1] matches a suffix of p[0..j - 1]
     // the character preceding the suffix is not equal to p[i - 1]
+    // otherwise -1
     L[0] = new int[p_len];
     // L[1][i] length of the largest suffix of p[i..p_len - 1]
     // that is also a prefix of p
+    // otherwise 0
     L[1] = new int[p_len];
 
     for (int i = 0; i < p_len; i++) {
@@ -114,13 +116,20 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
             }
         }
 
-        int j;
-        for (j = 0;
-            (j < p_len) &&
-            (p_len - 1 - j >= i) &&
-            (p[j] == p[p_len - 1 - j]);
-            j++) {}
-        L[1][i] = j - 1;
+        L[1][i] = 0;
+        // longest suffix of p[i..p_len - 1] is itself,
+        // which has length p_len - i
+        for (int j = 0; j < p_len - i; j++) {
+            // see if suffix of length j + 1 works
+            int k;
+            for (k = 0;
+                (k < j + 1) &&
+                (p[k] == p[p_len - j + k]);
+                k++) {}
+
+            // suffix matched
+            if (k == j + 1) L[1][i] = j + 1;
+        }
     }
 
     return L;
