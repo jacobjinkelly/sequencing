@@ -191,32 +191,30 @@ vector<int> boyer_moore(string const& p, string const& t) {
     vector<int> alignments;
     int bad_char_shift;
     int good_suffix_shift;
-    int shift;
     for (int i = 0; i < t_len - p_len + 1; i++) {
         bool match = true;
         for (int j = p_len - 1; j >= 0; j--) {
             if (p[j] != t[j + i]) {
                 bad_char_shift = j - r[ALPHABET_MAP[t[j + i]]];
                 if (j == p_len - 1) {
+                    // special case
                     good_suffix_shift = 1;
                 } else {
-                    // TODO: create an edge case comparing 0 and -1
                     if (L[0][j + 1] != -1) {
                         good_suffix_shift = p_len - 1 - L[0][j + 1];
                     } else {
                         good_suffix_shift = p_len - L[1][j + 1];
                     }
                 }
-                shift = max(bad_char_shift, good_suffix_shift);
                 // subtract 1 since for loop increments i
-                i += max(0, shift - 1);
+                i += max(bad_char_shift, good_suffix_shift) - 1;
                 match = false;
                 break;
             }
         }
         if (match) {
             alignments.push_back(i);
-            i += p_len - L[1][0] - 1;
+            i += p_len - L[1][1] - 1;
         }
     }
 
