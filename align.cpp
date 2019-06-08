@@ -87,7 +87,7 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
     L[0] = new int[p_len];
     // L[1][i] length of the largest suffix of p[i..p_len - 1]
     // that is also a prefix of p
-    // otherwise -1
+    // otherwise 0
     L[1] = new int[p_len];
 
     for (int i = 0; i < p_len; i++) {
@@ -116,7 +116,7 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
             }
         }
 
-        L[1][i] = -1;
+        L[1][i] = 0;
         // longest suffix of p[i..p_len - 1] is itself,
         // which has length p_len - i
         for (int j = 0; j < p_len - i; j++) {
@@ -124,7 +124,7 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
             int k;
             for (k = 0;
                 (k < j + 1) &&
-                (p[k] == p[p_len - j + k]);
+                (p[k] == p[p_len - 1 - j + k]);
                 k++) {}
 
             // suffix matched
@@ -160,7 +160,7 @@ int** good_suffix_index(string const& p, int const p_len) {
 
     for (int i = 0; i < p_len; i++) {
         L[0][i] = -1;
-        L[1][i] = -1;
+        L[1][i] = 0;
     }
 
     int i;
@@ -200,6 +200,7 @@ vector<int> boyer_moore(string const& p, string const& t) {
                 if (j == p_len - 1) {
                     good_suffix_shift = 1;
                 } else {
+                    // TODO: create an edge case comparing 0 and -1
                     if (L[0][j + 1] != -1) {
                         good_suffix_shift = p_len - 1 - L[0][j + 1];
                     } else {
