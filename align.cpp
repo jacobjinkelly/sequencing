@@ -204,10 +204,11 @@ vector<int> boyer_moore(string const& p, string const& t) {
                     if (L[0][j + 1] != -1) {
                         good_suffix_shift = p_len - 1 - L[0][j + 1];
                     } else {
-                        good_suffix_shift = p_len - 1 - L[1][j + 1];
+                        good_suffix_shift = p_len - L[1][j + 1];
                     }
                 }
                 shift = max(bad_char_shift, good_suffix_shift);
+                // subtract 1 since for loop increments i
                 i += max(0, shift - 1);
                 match = false;
                 break;
@@ -215,7 +216,7 @@ vector<int> boyer_moore(string const& p, string const& t) {
         }
         if (match) {
             alignments.push_back(i);
-            i += p_len - 1 - L[1][0] - 1;
+            i += p_len - L[1][0] - 1;
         }
     }
 
