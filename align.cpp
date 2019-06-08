@@ -191,8 +191,9 @@ vector<int> boyer_moore(string const& p, string const& t) {
     vector<int> alignments;
     int bad_char_shift;
     int good_suffix_shift;
+    bool match;
     for (int i = 0; i < t_len - p_len + 1; i++) {
-        bool match = true;
+        match = true;
         for (int j = p_len - 1; j >= 0; j--) {
             if (p[j] != t[j + i]) {
                 bad_char_shift = j - r[ALPHABET_MAP[t[j + i]]];
@@ -234,8 +235,9 @@ vector<int> naive(string const& p, string const& t) {
     const int t_len = t.length();
 
     vector<int> alignments;
+    bool match;
     for (int i = 0; i < t_len - p_len + 1; i++) {
-        bool match = true;
+        match = true;
         for (int j = 0; j < p_len; j++) {
             if (p[j] != t[j + i]) {
                 match = false;
