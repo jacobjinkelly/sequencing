@@ -151,6 +151,9 @@ int** good_suffix_index(string const& p, int const p_len) {
     // reverse the result
     reverse(n, n + p_len - 1);
 
+    cout << "preprocessing" << endl;
+    print_arr(n, p_len -  1);
+
     // construct indices as described in
     // https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
     // L[0] is "L`" in the notes, L[1] is "l`" in the notes
@@ -163,16 +166,14 @@ int** good_suffix_index(string const& p, int const p_len) {
         L[1][i] = 0;
     }
 
+    L[1][0] = p_len;
+    int max_j = 0;
     for (int j = 0; j < p_len - 1; j++) {
         L[0][p_len - n[j]] = j;
-    }
-
-    // naively accumulate L[1]
-    L[1][0] = p_len;
-    for (int i = 1; i < p_len; i++) {
-        for (int j = 0; j < p_len - i; j++) {
-            if (n[j] == j + 1) L[1][i] = j + 1;
+        if (n[j] == j + 1) {
+            max_j = j + 1;
         }
+        L[1][p_len - 1 - j] = max_j;
     }
 
     // clean up
