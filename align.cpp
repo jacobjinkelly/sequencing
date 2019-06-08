@@ -200,10 +200,10 @@ vector<int> boyer_moore(string const& p, string const& t) {
                 if (j == p_len - 1) {
                     good_suffix_shift = 1;
                 } else {
-                    if (L[0][j] != -1) {
-                        good_suffix_shift = p_len - 1 - L[0][j];
+                    if (L[0][j + 1] != -1) {
+                        good_suffix_shift = p_len - 1 - L[0][j + 1];
                     } else {
-                        good_suffix_shift = p_len - 1 - L[1][j];
+                        good_suffix_shift = p_len - 1 - L[1][j + 1];
                     }
                 }
                 shift = max(bad_char_shift, good_suffix_shift);
