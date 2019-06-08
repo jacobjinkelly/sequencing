@@ -163,10 +163,8 @@ int** good_suffix_index(string const& p, int const p_len) {
         L[1][i] = 0;
     }
 
-    int i;
     for (int j = 0; j < p_len - 1; j++) {
-        i = p_len - n[j];
-        L[0][i] = j;
+        L[0][p_len - n[j]] = j;
     }
 
     // naively accumulate L[1]
