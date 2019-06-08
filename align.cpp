@@ -151,9 +151,6 @@ int** good_suffix_index(string const& p, int const p_len) {
     // reverse the result
     reverse(n, n + p_len - 1);
 
-    cout << "preprocessing" << endl;
-    print_arr(n, p_len -  1);
-
     // construct indices as described in
     // https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
     // L[0] is "L`" in the notes, L[1] is "l`" in the notes
@@ -188,7 +185,7 @@ vector<int> boyer_moore(string const& p, string const& t) {
     const int t_len = t.length();
 
     int* r = bad_char_index(p, p_len);
-    int** L = naive_good_suffix_index(p, p_len);
+    int** L = good_suffix_index(p, p_len);
 
     vector<int> alignments;
     int bad_char_shift;
@@ -319,13 +316,11 @@ int main(int argc, char **argv) {
     add_alphabet(argv[1]);
     add_alphabet(argv[2]);
 
-    int p_len = strlen(argv[1]);
-    int** naive_good_suffix = naive_good_suffix_index(argv[1], p_len);
-    int** good_suffix = good_suffix_index(argv[1], p_len);
+    vector<int> bm_aligns = boyer_moore(argv[1], argv[2]);
+    vector<int> naive_aligns = naive(argv[1], argv[2]);
 
-    print_arr(naive_good_suffix[0], p_len);
-    print_arr(good_suffix[0], p_len);
-    print_arr(naive_good_suffix[1], p_len);
-    print_arr(good_suffix[1], p_len);
+    print_vec(bm_aligns);
+    print_vec(naive_aligns);
+
     return 0;
 }
