@@ -87,7 +87,7 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
     L[0] = new int[p_len];
     // L[1][i] length of the largest suffix of p[i..p_len - 1]
     // that is also a prefix of p
-    // otherwise 0
+    // otherwise -1
     L[1] = new int[p_len];
 
     for (int i = 0; i < p_len; i++) {
@@ -116,7 +116,7 @@ int** naive_good_suffix_index(string const& p, int const p_len) {
             }
         }
 
-        L[1][i] = 0;
+        L[1][i] = -1;
         // longest suffix of p[i..p_len - 1] is itself,
         // which has length p_len - i
         for (int j = 0; j < p_len - i; j++) {
