@@ -180,7 +180,7 @@ int** good_suffix_index(string const& p, int const p_len) {
 }
 
 // Return alignments of p in t using Boyer-Moore
-vector<int> boyer_moore(string const& p, string const& t) {
+vector<int> boyer_moore(string const& p, string const& t, int* char_comps_ptr = NULL) {
     const int p_len = p.length();
     const int t_len = t.length();
 
@@ -191,9 +191,11 @@ vector<int> boyer_moore(string const& p, string const& t) {
     int bad_char_shift;
     int good_suffix_shift;
     bool match;
+    int char_comps = 0;
     for (int i = 0; i < t_len - p_len + 1; i++) {
         match = true;
         for (int j = p_len - 1; j >= 0; j--) {
+            char_comps++;
             if (p[j] != t[j + i]) {
                 bad_char_shift = j - r[ALPHABET_MAP[t[j + i]]];
                 if (j == p_len - 1) {
@@ -224,20 +226,24 @@ vector<int> boyer_moore(string const& p, string const& t) {
     delete[] L[1];
     delete[] L;
 
+    if (char_comps_ptr != NULL) *char_comps_ptr = char_comps;
+
     return alignments;
 }
 
 
 // Return alignments of p in t using naive matching
-vector<int> naive(string const& p, string const& t) {
+vector<int> naive(string const& p, string const& t, int* char_comps_ptr = NULL) {
     const int p_len = p.length();
     const int t_len = t.length();
 
     vector<int> alignments;
     bool match;
+    int char_comps = 0;
     for (int i = 0; i < t_len - p_len + 1; i++) {
         match = true;
         for (int j = 0; j < p_len; j++) {
+            char_comps++;
             if (p[j] != t[j + i]) {
                 match = false;
                 break;
@@ -247,6 +253,8 @@ vector<int> naive(string const& p, string const& t) {
             alignments.push_back(i);
         }
     }
+
+    if (char_comps_ptr != NULL) *char_comps_ptr = char_comps;
 
     return alignments;
 }
