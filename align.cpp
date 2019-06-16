@@ -1,7 +1,6 @@
 // functions for sequence alignment
 
 #include "align.h"
-#include <chrono>
 
 using namespace std;
 
@@ -195,7 +194,7 @@ vector<int> boyer_moore(string const& p, string const& t,
     chrono::duration<double> elapsed = finish - start;
     if (elapsed_ptr != NULL) *elapsed_ptr = elapsed;
 
-    vector<int> alignments;
+    vector<int> aligns;
     int bad_char_shift;
     int good_suffix_shift;
     bool match;
@@ -225,7 +224,7 @@ vector<int> boyer_moore(string const& p, string const& t,
             }
         }
         if (match) {
-            alignments.push_back(i);
+            aligns.push_back(i);
             i += p_len - L[1][1] - 1;
         }
     }
@@ -239,7 +238,7 @@ vector<int> boyer_moore(string const& p, string const& t,
     if (char_comps_ptr != NULL) *char_comps_ptr = char_comps;
     if (num_aligns_ptr != NULL) *num_aligns_ptr = num_aligns;
 
-    return alignments;
+    return aligns;
 }
 
 
@@ -250,7 +249,7 @@ vector<int> naive(string const& p, string const& t,
     const int p_len = p.length();
     const int t_len = t.length();
 
-    vector<int> alignments;
+    vector<int> aligns;
     bool match;
     int char_comps = 0;
     int num_aligns = 0;
@@ -265,14 +264,14 @@ vector<int> naive(string const& p, string const& t,
             }
         }
         if (match) {
-            alignments.push_back(i);
+            aligns.push_back(i);
         }
     }
 
     if (char_comps_ptr != NULL) *char_comps_ptr = char_comps;
     if (num_aligns_ptr != NULL) *num_aligns_ptr = num_aligns;
 
-    return alignments;
+    return aligns;
 }
 
 // check if s only contains characters in ALPHABET
@@ -328,23 +327,58 @@ void print_arr(int* arr, int len) {
     cout << endl;
 }
 
+// parse file in FASTA format
+// returns the last read in the file
+// adapted from: http://rosettacode.org/wiki/FASTA_format#C.2B.2B
+string read_fasta(string file) {
+    ifstream input(file);
+
+    string line, name, content;
+
+    while(getline(input, line).good()) {
+        if (line.empty() || line[0] == '>') { // Identifier marker
+            if (!name.empty()) {
+                name.clear();
+            }
+            if (!line.empty()) {
+                name = line.substr(1);
+            }
+            content.clear();
+        } else if (!name.empty()) {
+            if (line.find(' ') != string::npos) { // Invalid sequence--no spaces allowed
+                name.clear();
+                content.clear();
+            } else {
+                content += line;
+            }
+        }
+    }
+    return name;
+}
+
 int main(int argc, char **argv) {
     if (argc != 3) {
-        cerr << "Usage: [p] [t]" << endl;
+        cerr << "Usage: " << argv[0] << " [p file] [t file]" << endl;
         return -1;
-    } else if (strlen(argv[1]) > strlen(argv[2])) {
+    }
+
+    string p = read_fasta(argv[1]);
+    string t = read_fasta(argv[2]);
+
+    if (p.length() > t.length()) {
         cerr << "[p] must be no longer than [t]" << endl;
         return -2;
     }
+
     // construct alphabet
-    add_alphabet(argv[1]);
-    add_alphabet(argv[2]);
+    add_alphabet(p);
+    add_alphabet(t);
 
     int bm_char_comps, naive_char_comps, bm_num_aligns, naive_num_aligns;
     chrono::duration<double> bm_index_elapsed;
 
     auto bm_start = chrono::high_resolution_clock::now();
-    vector<int> bm_aligns = boyer_moore(argv[1], argv[2],
+    vector<int> bm_aligns = boyer_moore(p, t,
                                         &bm_char_comps,
                                         &bm_num_aligns,
                                         &bm_index_elapsed);
@@ -352,14 +386,17 @@ int main(int argc, char **argv) {
     chrono::duration<double> bm_elapsed = bm_finish - bm_start;
 
     auto naive_start = chrono::high_resolution_clock::now();
-    vector<int> naive_aligns = naive(argv[1], argv[2],
+    vector<int> naive_aligns = naive(p, t,
                                      &naive_char_comps,
                                      &naive_num_aligns);
     auto naive_finish = chrono::high_resolution_clock::now();
     chrono::duration<double> naive_elapsed = naive_finish - naive_start;
 
-    print_vec(bm_aligns);
-    print_vec(naive_aligns);
+    // TODO: make this a check instead
+    if (bm_aligns != naive_aligns) {
+        cout << "Correctness Failed." << endle;
+        return -1;
+    }
 
     cout << bm_char_comps << " " << naive_char_comps << endl;
     cout << bm_num_aligns << " " << naive_num_aligns << endl;
