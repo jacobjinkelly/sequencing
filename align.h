@@ -22,7 +22,7 @@ int** naive_good_suffix_index(string const& p, int const p_len);
 int** good_suffix_index(string const& p, int const p_len);
 
 // Return alignments of p in t using Boyer-Moore
-vector<int> boyer_moore(string const& p, string const& t, int* char_comps_ptr);
+vector<int> boyer_moore(string const& p, string const& t, int* char_comps_ptr, std::chrono::duration<double>* elapsed_ptr);
 
 // Return alignments of p in t using naive matching
 vector<int> naive(string const& p, string const& t, int* char_comps_ptr);

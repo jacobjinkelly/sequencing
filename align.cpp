@@ -181,12 +181,18 @@ int** good_suffix_index(string const& p, int const p_len) {
 }
 
 // Return alignments of p in t using Boyer-Moore
-vector<int> boyer_moore(string const& p, string const& t, int* char_comps_ptr = NULL) {
+vector<int> boyer_moore(string const& p, string const& t,
+                        int* char_comps_ptr = NULL,
+                        std::chrono::duration<double>* elapsed_ptr = NULL) {
     const int p_len = p.length();
     const int t_len = t.length();
 
+    auto start = std::chrono::high_resolution_clock::now();
     int* r = bad_char_index(p, p_len);
     int** L = good_suffix_index(p, p_len);
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = finish - start;
+    if (elapsed_ptr != NULL) *elapsed_ptr = elapsed;
 
     vector<int> alignments;
     int bad_char_shift;
@@ -326,9 +332,10 @@ int main(int argc, char **argv) {
     add_alphabet(argv[2]);
 
     int bm_char_comps, naive_char_comps;
+    std::chrono::duration<double> bm_index_elapsed;
 
     auto bm_start = std::chrono::high_resolution_clock::now();
-    vector<int> bm_aligns = boyer_moore(argv[1], argv[2], &bm_char_comps);
+    vector<int> bm_aligns = boyer_moore(argv[1], argv[2], &bm_char_comps, &bm_index_elapsed);
     auto bm_finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> bm_elapsed = bm_finish - bm_start;
 
@@ -341,7 +348,7 @@ int main(int argc, char **argv) {
     print_vec(naive_aligns);
 
     cout << bm_char_comps << " " << naive_char_comps << endl;
-    cout << bm_elapsed.count() << " " << naive_elapsed.count() << endl;
+    cout << bm_index_elapsed.count() << " " << bm_elapsed.count() << " " << naive_elapsed.count() << endl;
 
     return 0;
 }
