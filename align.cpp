@@ -353,7 +353,13 @@ string read_fasta(string file) {
             }
         }
     }
-    return name;
+
+    // return dynamically allocated string
+    char *to_return = (char*)malloc(sizeof(char) * (content.length() + 1));
+    strncpy(to_return, content.c_str(), content.length());
+    to_return[content.length()] = '\0';
+
+    return to_return;
 }
 
 int main(int argc, char **argv) {
@@ -392,15 +398,18 @@ int main(int argc, char **argv) {
     auto naive_finish = chrono::high_resolution_clock::now();
     chrono::duration<double> naive_elapsed = naive_finish - naive_start;
 
-    // TODO: make this a check instead
     if (bm_aligns != naive_aligns) {
-        cout << "Correctness Failed." << endle;
+        cout << "Correctness Failed." << endl;
         return -1;
     }
 
-    cout << bm_char_comps << " " << naive_char_comps << endl;
-    cout << bm_num_aligns << " " << naive_num_aligns << endl;
-    cout << bm_index_elapsed.count() << " " << bm_elapsed.count() << " " << naive_elapsed.count() << endl;
+    cout << "Boyer-Moore Character Comparisons: " << bm_char_comps << endl;
+    cout << "Naive Character Comparisons: " << naive_char_comps << endl;
+    cout << "Boyer-Moore Number of Checked Alignmnets: " << bm_num_aligns << endl;
+    cout << "Naive Number of Checked Alignments: " << naive_num_aligns << endl;
+    cout << "Boyer-Moore Indexing Time: " << bm_index_elapsed.count() << endl;
+    cout << "Boyer-Moore Total Time: " << bm_elapsed.count() << endl;
+    cout << "Naive Total Time: " << naive_elapsed.count() << endl;
 
     return 0;
 }

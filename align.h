@@ -4,6 +4,7 @@
 #include <map>
 #include <algorithm>
 #include <cstring>
+#include <string.h>
 #include <chrono>
 
 using namespace std;
