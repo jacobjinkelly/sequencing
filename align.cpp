@@ -373,6 +373,7 @@ int main(int argc, char **argv) {
 
     if (p.length() > t.length()) {
         cerr << "[p] must be no longer than [t]" << endl;
+        cerr << "[p] length is " << p.length() << ", [t] length is " << t.length() << endl;
         return -2;
     }
 
@@ -399,7 +400,7 @@ int main(int argc, char **argv) {
     chrono::duration<double> naive_elapsed = naive_finish - naive_start;
 
     if (bm_aligns != naive_aligns) {
-        cout << "Correctness Failed." << endl;
+        cout << "CORRECTNESS FAILED" << endl;
         return -1;
     }
 
