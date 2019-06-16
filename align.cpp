@@ -1,6 +1,7 @@
 // functions for sequence alignment
 
 #include "align.h"
+#include <chrono>
 
 using namespace std;
 
@@ -324,11 +325,23 @@ int main(int argc, char **argv) {
     add_alphabet(argv[1]);
     add_alphabet(argv[2]);
 
-    vector<int> bm_aligns = boyer_moore(argv[1], argv[2]);
-    vector<int> naive_aligns = naive(argv[1], argv[2]);
+    int bm_char_comps, naive_char_comps;
+
+    auto bm_start = std::chrono::high_resolution_clock::now();
+    vector<int> bm_aligns = boyer_moore(argv[1], argv[2], &bm_char_comps);
+    auto bm_finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> bm_elapsed = bm_finish - bm_start;
+
+    auto naive_start = std::chrono::high_resolution_clock::now();
+    vector<int> naive_aligns = naive(argv[1], argv[2], &naive_char_comps);
+    auto naive_finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> naive_elapsed = naive_finish - naive_start;
 
     print_vec(bm_aligns);
     print_vec(naive_aligns);
+
+    cout << bm_char_comps << " " << naive_char_comps << endl;
+    cout << bm_elapsed.count() << " " << naive_elapsed.count() << endl;
 
     return 0;
 }
