@@ -1,6 +1,6 @@
 FLAGS = -Wall -g -std=c++11
 
-all : align.exe main.exe
+all : align.exe
 
 %.exe : %.o
 	g++ $(FLAGS) -o $@ $^
