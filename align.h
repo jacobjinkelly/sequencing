@@ -22,10 +22,10 @@ int** naive_good_suffix_index(string const& p, int const p_len);
 int** good_suffix_index(string const& p, int const p_len);
 
 // Return alignments of p in t using Boyer-Moore
-vector<int> boyer_moore(string const& p, string const& t);
+vector<int> boyer_moore(string const& p, string const& t, int* char_comps_ptr);
 
 // Return alignments of p in t using naive matching
-vector<int> naive(string const& p, string const& t);
+vector<int> naive(string const& p, string const& t, int* char_comps_ptr);
 
 // check if s only contains characters in ALPHABET
 bool check_alphabet(string const& s);
