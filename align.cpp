@@ -184,15 +184,15 @@ int** good_suffix_index(string const& p, int const p_len) {
 vector<int> boyer_moore(string const& p, string const& t,
                         int* char_comps_ptr = NULL,
                         int* num_aligns_ptr = NULL,
-                        std::chrono::duration<double>* elapsed_ptr = NULL) {
+                        chrono::duration<double>* elapsed_ptr = NULL) {
     const int p_len = p.length();
     const int t_len = t.length();
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = chrono::high_resolution_clock::now();
     int* r = bad_char_index(p, p_len);
     int** L = good_suffix_index(p, p_len);
-    auto finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = finish - start;
+    auto finish = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = finish - start;
     if (elapsed_ptr != NULL) *elapsed_ptr = elapsed;
 
     vector<int> alignments;
@@ -341,22 +341,22 @@ int main(int argc, char **argv) {
     add_alphabet(argv[2]);
 
     int bm_char_comps, naive_char_comps, bm_num_aligns, naive_num_aligns;
-    std::chrono::duration<double> bm_index_elapsed;
+    chrono::duration<double> bm_index_elapsed;
 
-    auto bm_start = std::chrono::high_resolution_clock::now();
+    auto bm_start = chrono::high_resolution_clock::now();
     vector<int> bm_aligns = boyer_moore(argv[1], argv[2],
                                         &bm_char_comps,
                                         &bm_num_aligns,
                                         &bm_index_elapsed);
-    auto bm_finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> bm_elapsed = bm_finish - bm_start;
+    auto bm_finish = chrono::high_resolution_clock::now();
+    chrono::duration<double> bm_elapsed = bm_finish - bm_start;
 
-    auto naive_start = std::chrono::high_resolution_clock::now();
+    auto naive_start = chrono::high_resolution_clock::now();
     vector<int> naive_aligns = naive(argv[1], argv[2],
                                      &naive_char_comps,
                                      &naive_num_aligns);
-    auto naive_finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> naive_elapsed = naive_finish - naive_start;
+    auto naive_finish = chrono::high_resolution_clock::now();
+    chrono::duration<double> naive_elapsed = naive_finish - naive_start;
 
     print_vec(bm_aligns);
     print_vec(naive_aligns);
