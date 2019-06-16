@@ -183,6 +183,7 @@ int** good_suffix_index(string const& p, int const p_len) {
 // Return alignments of p in t using Boyer-Moore
 vector<int> boyer_moore(string const& p, string const& t,
                         int* char_comps_ptr = NULL,
+                        int* num_aligns_ptr = NULL,
                         std::chrono::duration<double>* elapsed_ptr = NULL) {
     const int p_len = p.length();
     const int t_len = t.length();
@@ -199,8 +200,10 @@ vector<int> boyer_moore(string const& p, string const& t,
     int good_suffix_shift;
     bool match;
     int char_comps = 0;
+    int num_aligns = 0;
     for (int i = 0; i < t_len - p_len + 1; i++) {
         match = true;
+        num_aligns++;
         for (int j = p_len - 1; j >= 0; j--) {
             char_comps++;
             if (p[j] != t[j + i]) {
@@ -234,21 +237,26 @@ vector<int> boyer_moore(string const& p, string const& t,
     delete[] L;
 
     if (char_comps_ptr != NULL) *char_comps_ptr = char_comps;
+    if (num_aligns_ptr != NULL) *num_aligns_ptr = num_aligns;
 
     return alignments;
 }
 
 
 // Return alignments of p in t using naive matching
-vector<int> naive(string const& p, string const& t, int* char_comps_ptr = NULL) {
+vector<int> naive(string const& p, string const& t,
+                  int* char_comps_ptr = NULL,
+                  int* num_aligns_ptr = NULL) {
     const int p_len = p.length();
     const int t_len = t.length();
 
     vector<int> alignments;
     bool match;
     int char_comps = 0;
+    int num_aligns = 0;
     for (int i = 0; i < t_len - p_len + 1; i++) {
         match = true;
+        num_aligns++;
         for (int j = 0; j < p_len; j++) {
             char_comps++;
             if (p[j] != t[j + i]) {
@@ -262,6 +270,7 @@ vector<int> naive(string const& p, string const& t, int* char_comps_ptr = NULL) 
     }
 
     if (char_comps_ptr != NULL) *char_comps_ptr = char_comps;
+    if (num_aligns_ptr != NULL) *num_aligns_ptr = num_aligns;
 
     return alignments;
 }
@@ -331,16 +340,21 @@ int main(int argc, char **argv) {
     add_alphabet(argv[1]);
     add_alphabet(argv[2]);
 
-    int bm_char_comps, naive_char_comps;
+    int bm_char_comps, naive_char_comps, bm_num_aligns, naive_num_aligns;
     std::chrono::duration<double> bm_index_elapsed;
 
     auto bm_start = std::chrono::high_resolution_clock::now();
-    vector<int> bm_aligns = boyer_moore(argv[1], argv[2], &bm_char_comps, &bm_index_elapsed);
+    vector<int> bm_aligns = boyer_moore(argv[1], argv[2],
+                                        &bm_char_comps,
+                                        &bm_num_aligns,
+                                        &bm_index_elapsed);
     auto bm_finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> bm_elapsed = bm_finish - bm_start;
 
     auto naive_start = std::chrono::high_resolution_clock::now();
-    vector<int> naive_aligns = naive(argv[1], argv[2], &naive_char_comps);
+    vector<int> naive_aligns = naive(argv[1], argv[2],
+                                     &naive_char_comps,
+                                     &naive_num_aligns);
     auto naive_finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> naive_elapsed = naive_finish - naive_start;
 
@@ -348,6 +362,7 @@ int main(int argc, char **argv) {
     print_vec(naive_aligns);
 
     cout << bm_char_comps << " " << naive_char_comps << endl;
+    cout << bm_num_aligns << " " << naive_num_aligns << endl;
     cout << bm_index_elapsed.count() << " " << bm_elapsed.count() << " " << naive_elapsed.count() << endl;
 
     return 0;
