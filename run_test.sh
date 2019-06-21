@@ -14,8 +14,6 @@ do
 done
 
 # performance tests
-echo p.fa chr1.small.fa
-./align.exe p.fa chr1.small.fa
 echo p.fa chr1.fa
 ./align.exe p.fa chr1.fa
 echo p.fa chr20.fa
