@@ -17,9 +17,13 @@ Test cases for correctness are available in `tests`. The following command will 
 ./format_test.sh
 ```
 
-Test cases for performance must be downloaded. Subsets of Chromosome 1 and Chromosome 20 are used as reference genomes. They can be downloaded from the Human Reference Genome here; name the files `chr1.small.fa`, `chr1.fa`, and `chr20.fa` respectively, and place in the root directory. The query string is included in FASTA format in the file `p.fa` and is taken from Ben Langmead's slides.
+Test cases for performance must be downloaded. The reference genomes are from the Dec. 2013 (GRCh38/hg38) assembly of the human genome; chromosomes 1 and 20 were used and can be downloaded [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr1.fa.gz) and [here](http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr20.fa.gz) respectively; place the (decompressed) downloaded files in the root directory of the repository. The query string is included in FASTA format in the file `p.fa` and is taken from Ben Langmead's slides.
 
 The full test suite can then be run with the following command:
 ```
 ./run_test.sh
 ```
+
+# Acknowledgements
+
+[Ben Langmead's course](http://www.langmead-lab.org/teaching-materials/) was immensely helpful, and was a guide throughout developing this repository and learning about genomic sequencing.
