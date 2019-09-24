@@ -6,7 +6,7 @@ A repository of algorithms for genomic sequencing.
 
 ## Boyer-Moore
 
-The repository currently consists of an implementation of the [Boyer-Moore](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string-search_algorithm) algorithm for exact alignment of a sequencing read to a reference genome. The implementation uses a linear-time algorithm as described by [Gusfield](https://web.cs.ucdavis.edu/~gusfield/cs224f09/) (lecture notes [4](https://web.cs.ucdavis.edu/~gusfield/cs224f09/znotes.pdf) & [5](https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf])) to construct indexes of the query string used for the good suffix and bad character rules.
+The repository currently consists of an implementation of the [Boyer-Moore](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string-search_algorithm) algorithm for exact alignment of a sequencing read to a reference genome. The implementation uses a linear-time algorithm (the "Z algorithm") as described by [Gusfield](https://web.cs.ucdavis.edu/~gusfield/cs224f09/) (lecture notes [4](https://web.cs.ucdavis.edu/~gusfield/cs224f09/znotes.pdf) & [5](https://web.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf])) to construct indexes of the query string used for the good suffix and bad character rules.
 
 # Tests
 
